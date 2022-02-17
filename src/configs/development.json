@@ -1,0 +1,17 @@
+{
+    "env": "development",
+    "dbConfig": {
+        "host": "localhost",
+        "database": "GC_Tset_DB",
+        "port": 27017
+    },
+    "secretKey": "secretKeyXYZ",
+    "log": {
+        "format": "dev",
+        "dir": "../logs"
+    },
+    "cors": {
+        "origin": true,
+        "credentials": true
+    }
+}
