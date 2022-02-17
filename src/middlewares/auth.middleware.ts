@@ -16,6 +16,7 @@ const authMiddleware = async (req: RequestWithUser, res: Response, next: NextFun
       const findUser = await userModel.findById(userId);
 
       if (findUser) {
+        // < Role :: Access Management > //
         req.user = findUser;
         next();
       } else {

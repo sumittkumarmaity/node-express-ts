@@ -11,12 +11,13 @@ class AuthService {
 
   public users = userModel;
 
-  // signup //
+  // SIGNUP //
   public async signup(userData): Promise<User> {
-    if (isEmpty(userData)) throw new HttpException(400, "You're not userData");
+
+    if (isEmpty(userData)) throw new HttpException(400, "Invalid Data");
 
     const findUser: User = await this.users.findOne({ email: userData.email });
-    if (findUser) throw new HttpException(409, `You're email ${userData.email} already exists`);
+    if (findUser) throw new HttpException(409, `Your email ${userData.email} is already exists`);
 
     const hashedPassword = await hash(userData.password, 10);
     const createUserData: User = await this.users.create({ ...userData, password: hashedPassword });
@@ -24,9 +25,9 @@ class AuthService {
     return createUserData;
   }
 
-  // login //
-  public async login(userData:any): Promise<{ cookie: string; findUser: User }> {
-    if (isEmpty(userData)) throw new HttpException(400, "You're not userData");
+  // LOGIN //
+  public async login(userData:any): Promise<{ cookie: string; tokenData: any; findUser: User }> {
+    if (isEmpty(userData)) throw new HttpException(400, "Invalid Data");
 
     const findUser: User = await this.users.findOne({ email: userData.email });
     if (!findUser) throw new HttpException(409, `You're email ${userData.email} not found`);
@@ -37,12 +38,12 @@ class AuthService {
     const tokenData = this.createToken(findUser);
     const cookie = this.createCookie(tokenData);
 
-    return { cookie, findUser };
+    return { cookie, tokenData, findUser };
   }
 
-  // logout //
+  // LOGOUT //
   public async logout(userData: User): Promise<User> {
-    if (isEmpty(userData)) throw new HttpException(400, "You're not userData");
+    if (isEmpty(userData)) throw new HttpException(400, "Invalid Data");
 
     const findUser: User = await this.users.findOne({ email: userData.email, password: userData.password });
     if (!findUser) throw new HttpException(409, `You're email ${userData.email} not found`);
@@ -50,7 +51,7 @@ class AuthService {
     return findUser;
   }
 
-  // create token //
+  // TOKEN CREATION //
   public createToken(user: User): TokenData {
     const dataStoredInToken: DataStoredInToken = { _id: user._id };
     const secretKey: string = config.get('secretKey');
@@ -59,10 +60,11 @@ class AuthService {
     return { expiresIn, token: sign(dataStoredInToken, secretKey, { expiresIn }) };
   }
 
-  // create cookie //
+  // COOKIE CREATE & SET //
   public createCookie(tokenData: TokenData): string {
     return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn};`;
   }
+  
 }
 
 export default AuthService;
