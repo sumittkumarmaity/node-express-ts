@@ -7,6 +7,9 @@ import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { connect, set } from 'mongoose';
+// import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
 import { dbConnection } from '@databases';
 import { Routes } from '@interfaces/routes.interface';
 import errorMiddleware from '@middlewares/error.middleware';
@@ -25,6 +28,7 @@ class App {
     this.connectToDatabase();
     this.initializeMiddlewares();
     this.initializeRoutes(routes);
+    this.initializeSwagger();
     this.initializeErrorHandling();
   }
 
@@ -62,6 +66,11 @@ class App {
     routes.forEach(route => {
       this.app.use('/v1', route.router);
     });
+  }
+
+  private initializeSwagger() {
+    const specs = YAML.load('./swagger.yaml');
+    this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
   }
 
   private initializeErrorHandling() {
