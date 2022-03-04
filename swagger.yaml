@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: Backend API
+  title: Backend API's
   description: Backend Docs API docs
   version: 1.0.0
 servers:
