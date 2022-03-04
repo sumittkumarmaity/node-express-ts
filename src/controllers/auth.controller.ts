@@ -13,6 +13,7 @@ class AuthController {
     try {
       const userData = req.body;
       const signUpUserData: User = await this.authService.signup(userData);
+      
       res.status(StatusCodes.OK).json({
         serverResponse: {
           statusCode: StatusCodes.OK,
@@ -22,6 +23,7 @@ class AuthController {
           userData: signUpUserData
         }
       });
+      
     } catch (error) {
       next(error);
     }
