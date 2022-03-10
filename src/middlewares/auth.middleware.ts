@@ -23,11 +23,37 @@ const authMiddleware = async (req: RequestWithUser, res: Response, next: NextFun
         next(new HttpException(401, 'Wrong authentication token'));
       }
     } else {
-      next(new HttpException(404, 'Authentication token missing'));
+      next(new HttpException(401, 'Authentication token missing'));
     }
   } catch (error) {
     next(new HttpException(401, 'Wrong authentication token'));
   }
 };
+
+
+// const apiAccessMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+//   try {
+//     const XAPIAUTH = req.cookies['X-API-KEY'] || (req.header('X-API-KEY') ? req.header('X-API-KEY') : null);
+
+//     if (XAPIAUTH) {
+//       const secretKey: string = config.get('secretKey');
+//       const verificationResponse = (await verify(Authorization, secretKey)) as DataStoredInToken;
+//       const userId = verificationResponse._id;
+//       const findUser = await userModel.findById(userId);
+
+//       if (findUser) {
+//         // < Role :: Access Management > //
+//         req.user = findUser;
+//         next();
+//       } else {
+//         next(new HttpException(401, 'Wrong authentication token'));
+//       }
+//     } else {
+//       next(new HttpException(401, 'Authentication token missing'));
+//     }
+//   } catch (error) {
+//     next(new HttpException(401, 'Wrong authentication token'));
+//   }
+// };
 
 export default authMiddleware;

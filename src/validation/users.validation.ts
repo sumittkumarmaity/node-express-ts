@@ -24,10 +24,14 @@ class UsersValidation extends CustomValidation {
     }),
   };
 
+  // static getUserData = {
+  //   body: Joi.object().keys({
+  //     userId: Joi.string().required(),
+  //   }),
+  // };
+
   static getUserData = {
-    body: Joi.object().keys({
-      userId: Joi.string().required(),
-    }),
+    userId: Joi.string().required()
   };
 
   static updateUserDtls = {

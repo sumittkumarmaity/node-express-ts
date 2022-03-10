@@ -7,10 +7,31 @@ class UsersController {
 
   public userService = new userService();
 
+
+  // GET All USER //
+  public getAllUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const findOneUserData = await this.userService.findAllUser();
+
+      res.status(StatusCodes.OK).json({
+        serverResponse: {
+          statusCode: StatusCodes.OK,
+          message: "Success"
+        },
+        result: {
+          userData: findOneUserData
+        }
+      });
+
+    } catch (error) {
+      next(error);
+    }
+  };
+
   // GET USER BY ID //
   public getUserById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId: string = req.body.userId;
+      const userId: string = req.params.userId;
       const findOneUserData: User = await this.userService.findUserById(userId);
 
       res.status(StatusCodes.OK).json({

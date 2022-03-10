@@ -22,9 +22,13 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/usersignup'
+      security:
+        - apiKeyAuth : []
       responses:
-        "200":
-          description: New user created successfully
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '200':
+        description: OK (successfully authenticated)
 
   /auth/user-login:
     post:
@@ -54,10 +58,14 @@ paths:
       tags:
         - User
       description: Display all users
+      security:
+      - bearerAuth: []
       responses:
-        "200":
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '200':
           description: login successfully
-          
+
   /auth/add-new-user:
     post:
       summary: New User Add.
@@ -113,6 +121,18 @@ paths:
           description: Update successfully
         
 components:
+  securitySchemes:
+    bearerAuth:         
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    apiKeyAuth:        # arbitrary name for the security scheme
+      type: apiKey
+      in: header       # can be "header", "query" or "cookie"
+      name: X-API-KEY 
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
   schemas:
     course:
       type: object
