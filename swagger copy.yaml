@@ -9,6 +9,27 @@ servers:
   - url: http://staging-api.example.com
     description: Optional server description, e.g. Internal staging server for testing
 paths:
+  /auth/user-signup:
+    post:
+      summary: User Signup.
+      tags:
+        - Auth
+      description: Use this API to check registered New User
+      requestBody:
+        description: Structure of a User Signin
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/usersignup'
+      security:
+        - apiKeyAuth : []
+      responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '200':
+        description: OK (successfully authenticated)
+
   /auth/user-login:
     post:
       summary: User Signin OK.
@@ -25,6 +46,10 @@ paths:
       responses:
         "200":
           description: login successfully
+        "400":
+          description: The specified Email ID is invalid.
+        "409":
+          description: A user with the specified Email ID was not found.
         default:
           description: Unexpected error
   /users/get-users/:
@@ -40,6 +65,28 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         '200':
           description: login successfully
+
+  /users/add-new-user:
+    post:
+      summary: New User Add.
+      tags:
+        - User
+      description: Use this API to check Create New User
+      requestBody:
+        description: Structure of a User Signin
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/usersignup'
+      security:
+      - bearerAuth: []
+      responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '200':
+          description: New user created successfully
+
   /users/get-user-dtls/{user_id}:
     get:
       summary: Show User Details.
@@ -51,10 +98,7 @@ paths:
           required: true
           in: path
           schema:
-            $ref: "#/components/schemas/userID"
-      operationId: viewUserDtl
-      x-eov-operation-id: viewUserDtl
-      x-eov-operation-handler: userdtl
+            type: string
       responses:
         "200":
           description: course display successfully
@@ -62,7 +106,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/userdtls"
-                 
+
+  /users/update-user-dtls/:
+    put:
+      summary: Update User Details.
+      tags:
+        - User
+      description: Use this API to check Update User Details
+      requestBody:
+        description: Structure of a User Update Details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/userupdtls'
+      responses:
+        "200":
+          description: Update successfully
+        
 components:
   securitySchemes:
     bearerAuth:         
@@ -77,9 +138,27 @@ components:
     UnauthorizedError:
       description: Access token is missing or invalid
   schemas:
+    course:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        id:
+          type: intege
     usersignin:
       type: object
       properties:
+        email:
+          type: string
+        password:
+          type: string
+    usersignup:
+      type: object
+      properties:
+        name:
+          type: string
         email:
           type: string
         password:
@@ -89,8 +168,14 @@ components:
       properties:
         userId:
           type: string
-    userID:
-      type: string
+    userupdtls:
+      type: object
       properties:
         userId:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        password:
           type: string

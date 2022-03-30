@@ -5,6 +5,7 @@ import UsersValidation from '@/validation/users.validation';
 import authMiddleware from '@middlewares/auth.middleware';
 import validate from '@middlewares/validation.middleware';
 
+
 class AuthRoute implements Routes {
 
   public path = '/auth';
@@ -16,10 +17,11 @@ class AuthRoute implements Routes {
   }
 
   private initializeRoutes() {
-    this.router.post(`${this.path}/user-signup`, validate(UsersValidation.signup), this.authController.signUp);
-    this.router.post(`${this.path}/user-login`, validate(UsersValidation.login), this.authController.logIn);
+    this.router.post(`${this.path}/user-signup`, this.authController.signUp);
+    this.router.post(`${this.path}/user-login`, this.authController.logIn);
     this.router.post(`${this.path}/logout`, authMiddleware, this.authController.logOut);
   }
+
 
 }
 

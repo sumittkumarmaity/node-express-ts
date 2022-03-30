@@ -14,6 +14,9 @@ import { dbConnection } from '@databases';
 import { Routes } from '@interfaces/routes.interface';
 import errorMiddleware from '@middlewares/error.middleware';
 import { logger, stream } from '@utils/logger';
+import * as OpenApiValidator from 'express-openapi-validator';
+//import openapimiddleware from './middlewares/openapivalidator.middleware';
+
 
 class App {
   
@@ -59,8 +62,24 @@ class App {
     this.app.use(helmet());
     this.app.use(compression());
     this.app.use(express.json());
+    this.app.use(express.text());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
+    this.app.use(
+      OpenApiValidator.middleware({
+        apiSpec: './swagger.yaml',
+        validateResponses: false,
+       // operationHandlers: './handlers',
+        // validateSecurity: {
+        //   handlers: {
+        //     bearerAuth(req, scopes) {
+        //       return openapimiddleware.verifyToken(req)
+        //     }
+        //   }
+        // },
+      })
+    )
+    
   }
 
   private initializeRoutes(routes: Routes[]) {
@@ -69,10 +88,11 @@ class App {
     });
   }
 
+  /** without openapi validator swagger */
   private initializeSwagger() {
-    const specs = YAML.load('./swagger.yaml');
-    this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
-  }
+     const specs = YAML.load('./swagger.yaml');
+     this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+  } 
 
   private initializeErrorHandling() {
     this.app.use(errorMiddleware);
